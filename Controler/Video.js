@@ -23,6 +23,7 @@ const getVideos = async (req, res) => {
         query.category = { $regex: new RegExp(req.query.category, 'i') }
     }
     if (req.query.language) {
+        console.log(req.query.language)
         query.language = { $regex: new RegExp(req.query.language, 'i') }
     }
     if (req.query.hero) {
