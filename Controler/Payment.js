@@ -23,8 +23,8 @@ const payment = async (req, res) => {
     total_amount: subscription.price,
     currency: "USD",
     tran_id: tran_id, // use unique tran_id for each api call
-    success_url: `http://localhost:5000/payment/success/${tran_id}`, // added live link change localhost 5000
-    fail_url: `http://localhost:5000/payment/failedPay/${tran_id}`, // added live link change localhost 5000
+    success_url: `https://vibewabe-server.vercel.app/payment/success/${tran_id}`, // added live link change localhost 5000
+    fail_url: `https://vibewabe-server.vercel.app/payment/failedPay/${tran_id}`, // added live link change localhost 5000
     cancel_url: "http://localhost:3030/cancel",
     ipn_url: "http://localhost:3030/ipn",
     shipping_method: "Courier",
@@ -61,13 +61,13 @@ const payment = async (req, res) => {
 
 const successPayment = async (req, res) => {
   console.log(req.params.tranId);
-  res.redirect("http://localhost:3000/successfullPay");
+  res.redirect("https://vibe-wabe-five.vercel.app/successfullPay");
   // added live link change localhost 3000
 };
 
 const failedPay = async (req, res) => {
   console.log(req.params.tranId);
-  res.redirect("http://localhost:3000/failedPay");
+  res.redirect("https://vibe-wabe-five.vercel.app/failedPay");
   // added live link change localhost 3000
 };
 module.exports = { payment, successPayment, failedPay };
