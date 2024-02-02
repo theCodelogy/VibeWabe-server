@@ -11,6 +11,6 @@ userRouter
   .get("/", getUser)
   .get("/:email", getSingleUser)
   .post("/", createUser)
-  .delete("/:email", deleteUser);
+  .delete("/:email", deleteUser)
 
 module.exports = userRouter;

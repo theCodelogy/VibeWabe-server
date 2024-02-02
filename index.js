@@ -9,7 +9,7 @@ const musicRouter = require("./Routs/Music");
 const paymentRouter = require("./Routs/Payment");
 
 // middleware
-app.use(cors());
+app.use(cors())
 app.use(express.json());
 
 // MongoDb Database connection
