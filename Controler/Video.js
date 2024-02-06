@@ -19,21 +19,34 @@ const getVideos = async (req, res) => {
     const sort = {};
     if (req.query.title) {
         query.title = { $regex: new RegExp(req.query.title, 'i') }
-    }
-    if (req.query.category) {
+    } else if (req.query.category) {
         query.category = { $regex: new RegExp(req.query.category, 'i') }
     }
-    if (req.query.language) {
-        console.log(req.query.language)
+    else if (req.query.language) {
         query.language = { $regex: new RegExp(req.query.language, 'i') }
     }
-    if (req.query.hero) {
+    else if (req.query.recommended) {
+        if(req.query.recommended==='true'){
+            query.recommended = true
+        }else if(req.query.recommended==='false'){
+            req.query.recommended==='false'
+        }
+    } 
+    else if (req.query.featured) {
+        if (req.query.featured === 'true') {
+            query.featured = true
+        } else if (req.query.featured === 'false') {
+            query.featured = false
+        }
+
+    }
+    else if (req.query.hero) {
         query.hero = { $regex: new RegExp(req.query.hero, 'i') }
     }
-    if (req.query.tags) {
+    else if (req.query.tags) {
         query.tags = { $regex: new RegExp(req.query.tags, 'i') }
     }
-    if (req.query.sortby) {
+    else if (req.query.sortby) {
         sort[req.query.sortby] = req.query.sort ? parseInt(req.query.sort) : 1
     }
     const result = await videoCollection.find(query).sort(sort).skip(page * limit).limit(limit).toArray()
