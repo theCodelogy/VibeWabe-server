@@ -1,14 +1,6 @@
-require('dotenv').config()
-const { MongoClient, ServerApiVersion,ObjectId} = require('mongodb');
-const uri = process.env.DB_uri;
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
-});
-const userCollection = client.db(process.env.DB_NAME).collection("User")
+const {ObjectId ,client,dbName} = require('../db')
+
+const userCollection = client.db(dbName).collection("User")
 
 
 const getUser = async (req, res) => {

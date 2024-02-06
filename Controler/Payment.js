@@ -1,14 +1,6 @@
 require("dotenv").config();
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const SSLCommerzPayment = require("sslcommerz-lts");
-const uri = process.env.DB_uri;
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+const {ObjectId } = require('../db')
 
 const store_id = process.env.Store_id;
 const store_passwd = process.env.Store_Pass;
