@@ -12,7 +12,7 @@ const paymentRouter = require("./Routs/Payment");
 app.use(cors())
 app.use(express.json());
 
-// MongoDb Database connection
+
 async function run() {
   try {
     app.use("/user", userRouter);
