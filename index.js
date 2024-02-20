@@ -10,9 +10,11 @@ const paymentRouter = require("./Routs/Payment");
 const VideoCommentRouter = require("./Routs/Video/VideoComment");
 const MusicCommentRouter = require("./Routs/Music/MusicComment");
 const VideoPlaylistRouter = require("./Routs/Video/VideoPlaylist");
+const MusicPlaylistRouter = require("./Routs/Music/MusicPlaylist");
 const VideoSliderRouter = require("./Routs/Video/VideoSlider");
 const VideoUserHistoryRouter = require("./Routs/Video/VideoUserHistory");
 const orderRouter = require("./Routs/Order");
+const MusicUserHistoryRouter = require("./Routs/Music/MusicUserHistory");
 
 // middleware
 app.use(cors())
@@ -28,8 +30,10 @@ async function run() {
     app.use("/videoComment", VideoCommentRouter);
     app.use("/musicComment", MusicCommentRouter);
     app.use("/videoPlaylist", VideoPlaylistRouter);
+    app.use("/musicPlaylist", MusicPlaylistRouter);
     app.use("/videoSlider", VideoSliderRouter);
     app.use("/videoHistory", VideoUserHistoryRouter);
+    app.use("/musicHistory", MusicUserHistoryRouter);
     app.use("/order", orderRouter);
 
     // Send a ping to confirm a successful connection
@@ -37,8 +41,7 @@ async function run() {
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
   } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
+    
   }
 }
 run().catch(console.dir);
