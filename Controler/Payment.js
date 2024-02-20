@@ -1,15 +1,8 @@
 require("dotenv").config();
-const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const SSLCommerzPayment = require("sslcommerz-lts");
-const uri = process.env.DB_uri;
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
-
+const {ObjectId } = require('../db')
+const { orderCollection}= require("./Order");
+const { userCollection}= require("./User");
 const store_id = process.env.Store_id;
 const store_passwd = process.env.Store_Pass;
 const is_live = false; //true for live, false for sandbox
@@ -17,8 +10,8 @@ const is_live = false; //true for live, false for sandbox
 const tran_id = new ObjectId().toString();
 
 const payment = async (req, res) => {
-  // console.log(req.body);
   const subscription = req.body;
+
   const data = {
     total_amount: subscription.price,
     currency: "USD",
@@ -29,7 +22,7 @@ const payment = async (req, res) => {
     ipn_url: "http://localhost:3030/ipn",
     shipping_method: "Courier",
     product_name: "vibewabe subscription.",
-    product_category: subscription.category,
+    product_category: subscription.package,
     product_profile: "general",
     cus_name: subscription.name,
     cus_email: subscription.email,
@@ -56,17 +49,41 @@ const payment = async (req, res) => {
     let GatewayPageURL = apiResponse.GatewayPageURL;
     res.send({ url: GatewayPageURL });
     // console.log("Redirecting to: ", GatewayPageURL);
+
+    const finalOrder = {
+      ...subscription,
+      paidStatus:false,
+      tranjectionId:tran_id
+    }
+
+    const result = orderCollection.insertOne(finalOrder)
+
+
   });
 };
 
 const successPayment = async (req, res) => {
   console.log(req.params.tranId);
+  const order = await orderCollection.findOne({tranjectionId:req.params.tranId})
+  const user = await userCollection.findOne({email:order.email})
+  const subscriptionInfo = {
+    package:order.package,
+    takeingTime: new Date(),
+    duration: order.duration,
+    tranjectionId:order.tranjectionId
+  }
+  const userUpdate = await userCollection.updateOne({email:order.email}, {
+    $set: {role:'premium',subscriptionInfo }
+})
+const updateOrder = await orderCollection.updateOne({tranjectionId:req.params.tranId},{
+  $set: {paidStatus:true}
+})
   res.redirect("https://vibe-wabe-five.vercel.app/successfullPay");
-  // added live link change localhost 3000
+
 };
 
 const failedPay = async (req, res) => {
-  console.log(req.params.tranId);
+  const deleteOrder = await orderCollection.deleteOne({tranjectionId:req.params.tranId})
   res.redirect("https://vibe-wabe-five.vercel.app/failedPay");
   // added live link change localhost 3000
 };

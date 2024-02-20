@@ -1,14 +1,6 @@
-require('dotenv').config()
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const uri = process.env.DB_uri;
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
-});
-const musicCollection = client.db(process.env.DB_NAME).collection("Musics")
+const { ObjectId, client, dbName } = require('../../db')
+
+const musicCollection = client.db(dbName).collection("Musics")
 
 // Get all music
 const getMusics = async (req, res) => {
@@ -19,20 +11,20 @@ const getMusics = async (req, res) => {
     if (req.query.title) {
         query.title = { $regex: new RegExp(req.query.title, 'i') }
     }
-    else if (req.query.category) {
+    if (req.query.category) {
         query.category = { $regex: new RegExp(req.query.category, 'i') }
     }
-    else if (req.query.language) {
+    if (req.query.language) {
         query.language = { $regex: new RegExp(req.query.language, 'i') }
     }
-    else if (req.query.recommended) {
+    if (req.query.recommended) {
         if (req.query.recommended === 'true') {
             query.recommended = true
         } else if (req.query.recommended === 'false') {
             req.query.recommended === 'false'
         }
     }
-    else if (req.query.featured) {
+    if (req.query.featured) {
         if (req.query.featured === 'true') {
             query.featured = true
         } else if (req.query.featured === 'false') {
@@ -40,13 +32,13 @@ const getMusics = async (req, res) => {
         }
 
     }
-    else if (req.query.Singer) {
-        query.Singer = { $regex: new RegExp(req.query.Singer, 'i') }
+    if (req.query.singerName) {
+        query.singerName = { $regex: new RegExp(req.query.singerName, 'i') }
     }
-    else if (req.query.tags) {
+    if (req.query.tags) {
         query.tags = { $regex: new RegExp(req.query.tags, 'i') }
     }
-    else if (req.query.sortby) {
+    if (req.query.sortby) {
         sort[req.query.sortby] = req.query.sort ? parseInt(req.query.sort) : 1
     }
     const result = await musicCollection.find(query).sort(sort).skip(page * limit).limit(limit).toArray()
