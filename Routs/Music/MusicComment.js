@@ -6,7 +6,8 @@ const {
     postComment,
     deleteComment,
     updateComment,
-    individualMusicComments } = require('../../Controler/Music/MusicComment')
+    individualMusicComments
+} = require('../../Controler/Music/MusicComment')
 
 MusicCommentRouter
     .get('/', allComments)

@@ -1,12 +1,14 @@
 const { ObjectId, client, dbName } = require('../db')
- const orderCollection = client.db(dbName).collection("Orders")
+// collection name
+const orderCollection = client.db(dbName).collection("Orders")
 
 
 // get all order
 const getAllOrder = async (req, res) => {
     const page = parseInt(req.query.page)
     let query = {}
-    if(req.query.package){
+    // filter order by package name
+    if (req.query.package) {
         query.package = { $regex: new RegExp(req.query.package, 'i') }
     }
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;
@@ -35,4 +37,10 @@ const deleteOrder = async (req, res) => {
     res.send(result)
 }
 
-module.exports = { orderCollection,getAllOrder,getUserOrder,createOrder,deleteOrder }
+module.exports = {
+    orderCollection,
+    getAllOrder,
+    getUserOrder,
+    createOrder,
+    deleteOrder
+}

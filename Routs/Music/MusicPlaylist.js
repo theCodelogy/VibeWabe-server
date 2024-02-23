@@ -1,9 +1,11 @@
 const express = require("express");
 const MusicPlaylistRouter = express.Router();
-const { allPlaylist,
+const {
+    allPlaylist,
     indivitualUserPlaylist,
     postPlaylist,
-    deletePlaylist } = require('../../Controler/Music/MusicPlaylist')
+    deletePlaylist
+} = require('../../Controler/Music/MusicPlaylist')
 
 MusicPlaylistRouter
     .get('/', allPlaylist)

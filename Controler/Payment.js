@@ -1,8 +1,8 @@
 require("dotenv").config();
 const SSLCommerzPayment = require("sslcommerz-lts");
-const {ObjectId } = require('../db')
-const { orderCollection}= require("./Order");
-const { userCollection}= require("./User");
+const { ObjectId } = require('../db')
+const { orderCollection } = require("./Order");
+const { userCollection } = require("./User");
 const store_id = process.env.Store_id;
 const store_passwd = process.env.Store_Pass;
 const is_live = false; //true for live, false for sandbox
@@ -52,8 +52,8 @@ const payment = async (req, res) => {
 
     const finalOrder = {
       ...subscription,
-      paidStatus:false,
-      tranjectionId:tran_id
+      paidStatus: false,
+      tranjectionId: tran_id
     }
 
     const result = orderCollection.insertOne(finalOrder)
@@ -64,27 +64,31 @@ const payment = async (req, res) => {
 
 const successPayment = async (req, res) => {
   console.log(req.params.tranId);
-  const order = await orderCollection.findOne({tranjectionId:req.params.tranId})
-  const user = await userCollection.findOne({email:order.email})
+  const order = await orderCollection.findOne({ tranjectionId: req.params.tranId })
+  const user = await userCollection.findOne({ email: order.email })
   const subscriptionInfo = {
-    package:order.package,
+    package: order.package,
     takeingTime: new Date(),
     duration: order.duration,
-    tranjectionId:order.tranjectionId
+    tranjectionId: order.tranjectionId
   }
-  const userUpdate = await userCollection.updateOne({email:order.email}, {
-    $set: {role:'premium',subscriptionInfo }
-})
-const updateOrder = await orderCollection.updateOne({tranjectionId:req.params.tranId},{
-  $set: {paidStatus:true}
-})
+  const userUpdate = await userCollection.updateOne({ email: order.email }, {
+    $set: { role: 'premium', subscriptionInfo }
+  })
+  const updateOrder = await orderCollection.updateOne({ tranjectionId: req.params.tranId }, {
+    $set: { paidStatus: true }
+  })
   res.redirect("https://vibe-wabe-five.vercel.app/successfullPay");
 
 };
 
 const failedPay = async (req, res) => {
-  const deleteOrder = await orderCollection.deleteOne({tranjectionId:req.params.tranId})
+  const deleteOrder = await orderCollection.deleteOne({ tranjectionId: req.params.tranId })
   res.redirect("https://vibe-wabe-five.vercel.app/failedPay");
   // added live link change localhost 3000
 };
-module.exports = { payment, successPayment, failedPay };
+module.exports = {
+  payment,
+  successPayment,
+  failedPay
+};
