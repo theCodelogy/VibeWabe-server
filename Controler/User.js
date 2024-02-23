@@ -1,5 +1,5 @@
 const { ObjectId, client, dbName } = require('../db')
-
+// collection name
 const userCollection = client.db(dbName).collection("User")
 
 
@@ -8,13 +8,15 @@ const getUser = async (req, res) => {
     const page = parseInt(req.query.page)
     let query = {}
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;
+    // search user by name
     if (req.query.name) {
         query.name = { $regex: new RegExp(req.query.name, 'i') }
     }
+    // filter user by role
     if (req.query.role) {
         query.role = { $regex: new RegExp(req.query.role, 'i') }
     }
-
+    // filter admin user
     if (req.query.admin) {
         if (req.query.admin === 'true') {
             query.admin = true
@@ -27,6 +29,7 @@ const getUser = async (req, res) => {
     res.send(result)
 }
 
+// get single user by email
 const getSingleUser = async (req, res) => {
     const query = { email: req.params.email }
     const result = await userCollection.findOne(query)
@@ -38,6 +41,7 @@ const createUser = async (req, res) => {
     const user = req.body;
     const query = { email: user.email }
     const existingUser = await userCollection.findOne(query)
+    // check user already exist or not in the userCollection
     if (existingUser) {
         return res.send({ message: 'user already exist', insertedId: null })
     }
@@ -56,10 +60,18 @@ const patchUser = async (req, res) => {
     res.send(result)
 }
 
+// delete user by email
 const deleteUser = async (req, res) => {
     const query = { email: req.params.email }
     const result = await userCollection.deleteOne(query)
     res.send(result)
 }
 
-module.exports = { createUser, getUser, getSingleUser, deleteUser, patchUser,userCollection }
+module.exports = {
+    createUser,
+    getUser,
+    getSingleUser,
+    deleteUser,
+    patchUser,
+    userCollection
+}

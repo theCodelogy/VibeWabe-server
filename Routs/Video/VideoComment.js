@@ -1,6 +1,13 @@
 const express = require("express");
 const VideoCommentRouter = express.Router();
-const {allComments, getIndividualVideoComments,postComment,deleteComment,updateComment ,singleComment} = require('../../Controler/Video/VideoComment')
+const {
+    allComments,
+    getIndividualVideoComments,
+    postComment,
+    deleteComment,
+    updateComment,
+    singleComment
+} = require('../../Controler/Video/VideoComment')
 
 VideoCommentRouter
     .get('/', allComments)

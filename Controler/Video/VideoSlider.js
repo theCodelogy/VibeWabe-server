@@ -1,11 +1,18 @@
 const { ObjectId, client, dbName } = require('../../db')
-
+// collection name
 const VideoSlidersCollection = client.db(dbName).collection("VideoSliders")
 
 
 // get all slider
 const allSliders = async (req, res) => {
-    const result = await VideoSlidersCollection.find().toArray()
+    let query = {}
+    const limit = req.query.limit ? parseInt(req.query.limit) : 0;
+    //    filter slider by category
+    if (req.query.category) {
+        query.category = { $regex: new RegExp(req.query.category, 'i') }
+    }
+
+    const result = await VideoSlidersCollection.find(query).sort({ _id: -1 }).limit(limit).toArray()
     res.send(result)
 }
 
@@ -49,4 +56,10 @@ const deleteSlider = async (req, res) => {
     res.send(result)
 }
 
-module.exports = { allSliders, singleSlider, postSlider, updateSlider, deleteSlider }
+module.exports = {
+    allSliders,
+    singleSlider,
+    postSlider,
+    updateSlider,
+    deleteSlider
+}

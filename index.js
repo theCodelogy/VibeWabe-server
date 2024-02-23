@@ -15,6 +15,7 @@ const VideoSliderRouter = require("./Routs/Video/VideoSlider");
 const VideoUserHistoryRouter = require("./Routs/Video/VideoUserHistory");
 const orderRouter = require("./Routs/Order");
 const MusicUserHistoryRouter = require("./Routs/Music/MusicUserHistory");
+const notificationRouter = require("./Routs/Notification/Notification");
 const ChannelRouter = require("./Routs/Channel/Channel");
 
 // middleware
@@ -36,6 +37,7 @@ async function run() {
     app.use("/videoHistory", VideoUserHistoryRouter);
     app.use("/musicHistory", MusicUserHistoryRouter);
     app.use("/order", orderRouter);
+    app.use("/notification", notificationRouter);
     app.use("/channel", ChannelRouter);
 
     // Send a ping to confirm a successful connection
@@ -51,6 +53,15 @@ run().catch(console.dir);
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
+
+
+app.use((err,req,res,next)=>{
+  if(err.message){
+    res.status(500).send(err.message)
+  }else{
+    res.status(500).send('There was an error!')
+  }
+})
 
 
 app.listen(port, () => {

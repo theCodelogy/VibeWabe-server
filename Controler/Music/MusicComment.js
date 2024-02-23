@@ -1,16 +1,16 @@
 const { ObjectId, client, dbName } = require('../../db')
-
+// collection name
 const MusicCommentsCollection = client.db(dbName).collection("MusicComments")
 
 
 // get all comments
-const allComments = async (req,res)=>{
+const allComments = async (req, res) => {
     const result = await MusicCommentsCollection.find().toArray()
     res.send(result)
 }
 
 // get all comments
-const singleComments = async (req,res)=>{
+const singleComments = async (req, res) => {
     const id = req.params.id;
     const filter = { _id: new ObjectId(id) }
     const result = await MusicCommentsCollection.find(filter).toArray()
@@ -21,10 +21,10 @@ const singleComments = async (req,res)=>{
 // get all individual music  comments  by id
 const individualMusicComments = async (req, res) => {
     const id = req.params.id;
-    const query = { videoId:id }
+    const query = { videoId: id }
     const page = parseInt(req.query.page)
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;
-    const result = await MusicCommentsCollection.find(query).sort({_id:-1}).skip(page * limit).limit(limit).toArray()
+    const result = await MusicCommentsCollection.find(query).sort({ _id: -1 }).skip(page * limit).limit(limit).toArray()
     res.send(result)
 }
 
@@ -43,8 +43,8 @@ const updateComment = async (req, res) => {
     const options = { upsert: true };
     const updateCommentData = {
         $set: {
-            content:data.content,
-            email:data.email
+            content: data.content,
+            email: data.email
         },
     }
     const result = await MusicCommentsCollection.updateOne(filter, updateCommentData, options)
@@ -58,4 +58,11 @@ const deleteComment = async (req, res) => {
     res.send(result)
 }
 
-module.exports = {allComments, singleComments,postComment,deleteComment,updateComment,individualMusicComments }
+module.exports = {
+    allComments,
+    singleComments,
+    postComment,
+    deleteComment,
+    updateComment,
+    individualMusicComments
+}

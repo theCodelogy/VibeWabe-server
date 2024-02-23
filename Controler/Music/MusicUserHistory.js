@@ -1,15 +1,15 @@
 const { ObjectId, client, dbName } = require('../../db')
-
+// collection name
 const MusicUserHistoryCollection = client.db(dbName).collection("UserMusicHistory")
 
 
 // get all history
 const allHistory = async (req, res) => {
     const email = req.params.email;
-    const query = { email:email }
+    const query = { email: email }
     const page = parseInt(req.query.page)
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;
-    const result = await MusicUserHistoryCollection.find(query).sort({_id:-1}).skip(page * limit).limit(limit).toArray()
+    const result = await MusicUserHistoryCollection.find(query).sort({ _id: -1 }).skip(page * limit).limit(limit).toArray()
     res.send(result)
 }
 
@@ -30,4 +30,8 @@ const deleteHistory = async (req, res) => {
     res.send(result)
 }
 
-module.exports = { allHistory, postHistory, deleteHistory }
+module.exports = {
+    allHistory,
+    postHistory,
+    deleteHistory
+}

@@ -1,5 +1,5 @@
 const { ObjectId, client, dbName } = require('../../db')
-
+// collection name
 const VideoPlaylistCollection = client.db(dbName).collection("VideoPlaylist")
 
 
@@ -17,7 +17,7 @@ const indivitualUserPlaylist = async (req, res) => {
     const query = { email: email }
     const page = parseInt(req.query.page)
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;
-    const result = await VideoPlaylistCollection.find(query).sort({_id:-1}).skip(page * limit).limit(limit).toArray()
+    const result = await VideoPlaylistCollection.find(query).sort({ _id: -1 }).skip(page * limit).limit(limit).toArray()
     res.send(result)
 }
 
@@ -37,4 +37,9 @@ const deletePlaylist = async (req, res) => {
     res.send(result)
 }
 
-module.exports = {allPlaylist,indivitualUserPlaylist,postPlaylist,deletePlaylist }
+module.exports = {
+    allPlaylist,
+    indivitualUserPlaylist,
+    postPlaylist,
+    deletePlaylist
+}
