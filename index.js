@@ -15,6 +15,7 @@ const VideoSliderRouter = require("./Routs/Video/VideoSlider");
 const VideoUserHistoryRouter = require("./Routs/Video/VideoUserHistory");
 const orderRouter = require("./Routs/Order");
 const MusicUserHistoryRouter = require("./Routs/Music/MusicUserHistory");
+const ChannelRouter = require("./Routs/Channel/Channel");
 
 // middleware
 app.use(cors())
@@ -35,6 +36,7 @@ async function run() {
     app.use("/videoHistory", VideoUserHistoryRouter);
     app.use("/musicHistory", MusicUserHistoryRouter);
     app.use("/order", orderRouter);
+    app.use("/channel", ChannelRouter);
 
     // Send a ping to confirm a successful connection
     console.log(
