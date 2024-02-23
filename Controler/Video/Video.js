@@ -1,14 +1,7 @@
-require('dotenv').config()
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const uri = process.env.DB_uri;
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
-});
-const videoCollection = client.db(process.env.DB_NAME).collection("Videos")
+const { ObjectId, client, dbName } = require('../../db')
+const {notificationCollection} = require('../Notification/Notification')
+// collection name
+const videoCollection = client.db(dbName).collection("Videos")
 
 
 // Get all Videos
@@ -17,22 +10,28 @@ const getVideos = async (req, res) => {
     let query = {}
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;
     const sort = {};
+    // filter by video title
     if (req.query.title) {
         query.title = { $regex: new RegExp(req.query.title, 'i') }
-    } else if (req.query.category) {
+    }
+    // filter by video category
+    if (req.query.category) {
         query.category = { $regex: new RegExp(req.query.category, 'i') }
     }
-    else if (req.query.language) {
+    // filter by video language
+    if (req.query.language) {
         query.language = { $regex: new RegExp(req.query.language, 'i') }
     }
-    else if (req.query.recommended) {
-        if(req.query.recommended==='true'){
+    // filter recommended videos
+    if (req.query.recommended) {
+        if (req.query.recommended === 'true') {
             query.recommended = true
-        }else if(req.query.recommended==='false'){
-            req.query.recommended==='false'
+        } else if (req.query.recommended === 'false') {
+            req.query.recommended === 'false'
         }
-    } 
-    else if (req.query.featured) {
+    }
+    // filter featured videos
+    if (req.query.featured) {
         if (req.query.featured === 'true') {
             query.featured = true
         } else if (req.query.featured === 'false') {
@@ -40,14 +39,17 @@ const getVideos = async (req, res) => {
         }
 
     }
-    else if (req.query.hero) {
+    // filter videos by hero name
+    if (req.query.hero) {
         query.hero = { $regex: new RegExp(req.query.hero, 'i') }
     }
-    else if (req.query.tags) {
+    // filter videos by tags name
+    if (req.query.tags) {
         query.tags = { $regex: new RegExp(req.query.tags, 'i') }
     }
-    else if (req.query.sortby) {
-        sort[req.query.sortby] = req.query.sort ? parseInt(req.query.sort) : 1
+    // sort video assanding or dissanding
+    if (req.query.sortBy) {
+        sort[req.query.sortBy] = req.query.sort ? parseInt(req.query.sort) : 1
     }
     const result = await videoCollection.find(query).sort(sort).skip(page * limit).limit(limit).toArray()
     res.send(result)
@@ -56,10 +58,12 @@ const getVideos = async (req, res) => {
 // Get single video by id
 const getSingleVideos = async (req, res) => {
     const query = { _id: new ObjectId(req.params.id) }
+    // check user admin or normal user
     if (req.query.admin === 'true') {
         const exVideoData = await videoCollection.findOne(query)
         res.send(exVideoData)
     } else {
+        // if user is a normal user incriment the videos views
         const exVideoData = await videoCollection.findOne(query)
         const updateVideo = {
             $set: {
@@ -78,6 +82,18 @@ const getSingleVideos = async (req, res) => {
 const createVideo = async (req, res) => {
     const video = req.body;
     const result = await videoCollection.insertOne(video)
+    if(req.query.notifyingUser==='true'){
+        const notification = {
+            title:video.title,
+            notificationFor:'premium',
+            contentThambnail:video.thambnail,
+            date:new Date(),
+            contentId:result.insertedId,
+        }
+        console.log(notification)
+        notificationCollection.insertOne(notification)
+    }
+    console.log(result)
     res.send(result)
 }
 
@@ -127,4 +143,11 @@ const deleteVideo = async (req, res) => {
     res.send(result)
 }
 
-module.exports = { getVideos, getSingleVideos, createVideo, deleteVideo, patchVideo, updateVideo }
+module.exports = {
+    getVideos,
+    getSingleVideos,
+    createVideo,
+    deleteVideo,
+    patchVideo,
+    updateVideo
+}

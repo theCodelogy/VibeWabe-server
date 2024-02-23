@@ -1,6 +1,13 @@
 const express = require('express')
 const musicRouter = express.Router()
-const {getMusics,getSingleMusic,createMusic,deleteMusic,updateMusic,patchMusic} = require('../Controler/Music')
+const {
+    getMusics,
+    getSingleMusic,
+    createMusic,
+    deleteMusic,
+    updateMusic,
+    patchMusic
+} = require('../../Controler/Music/Music')
 
 musicRouter
     .get('/', getMusics)

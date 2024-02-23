@@ -1,14 +1,6 @@
-require('dotenv').config()
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-const uri = process.env.DB_uri;
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
-});
-const musicCollection = client.db(process.env.DB_NAME).collection("Musics")
+const { ObjectId, client, dbName } = require('../../db')
+// collection name
+const musicCollection = client.db(dbName).collection("Musics")
 
 // Get all music
 const getMusics = async (req, res) => {
@@ -16,23 +8,28 @@ const getMusics = async (req, res) => {
     let query = {}
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;
     const sort = {};
+    // filter music by title
     if (req.query.title) {
         query.title = { $regex: new RegExp(req.query.title, 'i') }
     }
-    else if (req.query.category) {
+    // filter music by category
+    if (req.query.category) {
         query.category = { $regex: new RegExp(req.query.category, 'i') }
     }
-    else if (req.query.language) {
+    // filter music by languge
+    if (req.query.language) {
         query.language = { $regex: new RegExp(req.query.language, 'i') }
     }
-    else if (req.query.recommended) {
+    // filter recommentded music
+    if (req.query.recommended) {
         if (req.query.recommended === 'true') {
             query.recommended = true
         } else if (req.query.recommended === 'false') {
             req.query.recommended === 'false'
         }
     }
-    else if (req.query.featured) {
+    // filter featured music
+    if (req.query.featured) {
         if (req.query.featured === 'true') {
             query.featured = true
         } else if (req.query.featured === 'false') {
@@ -40,14 +37,17 @@ const getMusics = async (req, res) => {
         }
 
     }
-    else if (req.query.Singer) {
-        query.Singer = { $regex: new RegExp(req.query.Singer, 'i') }
+    // filter music by singer name
+    if (req.query.singerName) {
+        query.singerName = { $regex: new RegExp(req.query.singerName, 'i') }
     }
-    else if (req.query.tags) {
+    // filter music by tags
+    if (req.query.tags) {
         query.tags = { $regex: new RegExp(req.query.tags, 'i') }
     }
-    else if (req.query.sortby) {
-        sort[req.query.sortby] = req.query.sort ? parseInt(req.query.sort) : 1
+    // sort music assanding or dessanding
+    if (req.query.sortBy) {
+        sort[req.query.sortBy] = req.query.sort ? parseInt(req.query.sort) : 1
     }
     const result = await musicCollection.find(query).sort(sort).skip(page * limit).limit(limit).toArray()
     res.send(result)
@@ -56,10 +56,12 @@ const getMusics = async (req, res) => {
 // Get single music by id
 const getSingleMusic = async (req, res) => {
     const query = { _id: new ObjectId(req.params.id) }
+    // check user is an admin or normal user
     if (req.query.admin === 'true') {
         const exMusicData = await musicCollection.findOne(query)
         res.send(exMusicData)
     } else {
+        // if user is a normanl user incriment music views
         const exMusicData = await musicCollection.findOne(query)
         const updateMusiView = {
             $set: {
@@ -124,4 +126,11 @@ const deleteMusic = async (req, res) => {
     res.send(result)
 }
 
-module.exports = { getMusics, getSingleMusic, createMusic, deleteMusic, updateMusic, patchMusic }
+module.exports = {
+    getMusics,
+    getSingleMusic,
+    createMusic,
+    deleteMusic,
+    updateMusic,
+    patchMusic
+}

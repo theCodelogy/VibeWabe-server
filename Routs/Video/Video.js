@@ -1,6 +1,13 @@
 const express = require('express')
 const videoRouter = express.Router()
-const { getVideos, getSingleVideos, createVideo, deleteVideo, patchVideo, updateVideo } = require('../Controler/Video')
+const {
+    getVideos,
+    getSingleVideos,
+    createVideo,
+    deleteVideo,
+    patchVideo,
+    updateVideo
+} = require('../../Controler/Video/Video')
 
 videoRouter
     .get('/', getVideos)
