@@ -44,6 +44,7 @@ const updateComment = async (req, res) => {
     const updateCommentData = {
         $set: {
             content: data.content,
+            userName:data.userName,
             email: data.email
         },
     }

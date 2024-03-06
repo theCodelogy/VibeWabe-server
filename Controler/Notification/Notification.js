@@ -5,21 +5,22 @@ const notificationCollection = client.db(dbName).collection("Notifications")
 
 // get all notifications
 const getNotifications = async (req, res) => {
-    const page = parseInt(req.query.page)
     let query = {}
     const limit = req.query.limit ? parseInt(req.query.limit) : 0;
     // filter notification by user type
     if (req.query.notificationFor) {
         query.notificationFor = { $regex: new RegExp(req.query.notificationFor, 'i') }
     }
-    // filter notification by date
-    if (req.query.lastDate) {
+    // filter notification by day limite
+    if (req.query.totalDay) {
+        const toDay = new Date()
+        const previousDate= new Date(toDay.getTime() - (req.query.totalDay * 24 * 60 * 60 * 1000))
         query.date = {
-            $gte: new Date(),
-            $lte: new Date(req.query.lastDate)
+            $gte: new Date(previousDate),
+            $lte: new Date()
         }
     }
-    const result = await notificationCollection.find(query).skip(page * limit).limit(limit).toArray()
+    const result = await notificationCollection.find(query).sort({ _id: -1 }).limit(limit).toArray()
     res.send(result)
 }
 
@@ -37,6 +38,17 @@ const createNotification = async (req, res) => {
     res.send(result)
 }
 
+// patch notification data for update notification view
+const patchNotification = async (req, res) => {
+    const data = req.body
+    const query = { _id: new ObjectId(req.params.id) }
+    const updateVideo = {
+        $set: data
+    }
+    const result = await notificationCollection.updateOne(query, updateVideo)
+    res.send(result)
+}
+
 
 // delete single notification
 const deleteNotification = async (req, res) => {
@@ -50,5 +62,6 @@ module.exports = {
     getSinglNotification,
     createNotification,
     deleteNotification,
+    patchNotification,
     notificationCollection
 }

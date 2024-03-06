@@ -1,4 +1,5 @@
-const { ObjectId, client, dbName } = require('../../db')
+const { ObjectId, client, dbName } = require('../../db');
+const { notificationCollection } = require('../Notification/Notification');
 
 const channelCollection = client.db(dbName).collection("channel");
 
@@ -7,6 +8,17 @@ const channelCollection = client.db(dbName).collection("channel");
 const createChannel = async (req, res) => {
     const channel = req.body;
     const result = await channelCollection.insertOne(channel)
+    if(req.query.notifyingUser==='true'){
+        const notification = {
+            title:channel.title,
+            notificationFor:'premium',
+            category:'channel',
+            contentThambnail:channel.thambnail,
+            date:new Date(),
+            contentId:result.insertedId,
+        }
+        notificationCollection.insertOne(notification)
+    }
     res.send(result)
 }
 
