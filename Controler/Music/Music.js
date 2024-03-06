@@ -1,4 +1,5 @@
 const { ObjectId, client, dbName } = require('../../db')
+const { notificationCollection } = require('../Notification/Notification')
 // collection name
 const musicCollection = client.db(dbName).collection("Musics")
 
@@ -77,8 +78,19 @@ const getSingleMusic = async (req, res) => {
 
 // Upload music
 const createMusic = async (req, res) => {
-    const video = req.body;
-    const result = await musicCollection.insertOne(video)
+    const music = req.body;
+    const result = await musicCollection.insertOne(music)
+    if(req.query.notifyingUser==='true'){
+        const notification = {
+            title:music.title,
+            notificationFor:'premium',
+            category:'music',
+            contentThambnail:music.thambnail,
+            date:new Date(),
+            contentId:result.insertedId,
+        }
+        notificationCollection.insertOne(notification)
+    }
     res.send(result)
 }
 

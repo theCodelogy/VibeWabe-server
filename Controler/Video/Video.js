@@ -86,14 +86,13 @@ const createVideo = async (req, res) => {
         const notification = {
             title:video.title,
             notificationFor:'premium',
+            category:'video',
             contentThambnail:video.thambnail,
             date:new Date(),
             contentId:result.insertedId,
         }
-        console.log(notification)
         notificationCollection.insertOne(notification)
     }
-    console.log(result)
     res.send(result)
 }
 
